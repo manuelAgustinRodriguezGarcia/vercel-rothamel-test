@@ -12,10 +12,6 @@ concurrency:
   group: vercel-production
   cancel-in-progress: true
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -36,8 +32,20 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      - name: Link Vercel project
+        run: >
+          vercel link
+          --yes
+          --project vercel-rothamel-test
+          --scope rothamel-repuestos
+          --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Pull Vercel Production config
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: >
+          vercel pull
+          --yes
+          --environment=production
+          --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build for Production
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
